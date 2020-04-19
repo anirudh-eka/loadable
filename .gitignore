@@ -1,2 +1,5 @@
 node_modules
 ts/build
+hs/build
+hs/src/*.hi
+hs/src/*.o

@@ -1,6 +1,7 @@
 class Success<T> {
     value: T;
     kind: "success";
+    map = (f: (x: T) => any) => map(f, this)
     constructor(value: T) {
         this.value = value;
         this.kind = "success";
@@ -9,6 +10,7 @@ class Success<T> {
 
 class Loading {
     kind: "loading";
+    map = (f: (x: any) => any) => map(f, this)
     constructor() {
         this.kind = "loading"
     }
@@ -16,6 +18,7 @@ class Loading {
 
 class Idle {
     kind: "idle";
+    map = (f: (x: any) => any) => map(f, this)
     constructor() {
         this.kind = "idle"
     }
@@ -23,32 +26,33 @@ class Idle {
 
 class Failure {
     kind: "failure";
+    map = (f: (x: any) => any) => map(f, this)
     constructor() {
         this.kind = "failure"
     }
 }
 
-type Loadable<T> = Success<T> | Loading | Idle | Failure;
+type Loadable<T> = Idle | Loading | Success<T> | Failure;
 
-function map<A, B>(l: Loadable<A>, f: (x: A) => B ): Loadable<B> {
+function map<A, B>(f: (x: A) => B, l: Loadable<A>): Loadable<B> {
   switch (l.kind) {
-      case "success": return new Success(f(l.value));
-      case "loading": return new Loading();
-      case "failure": return new Failure();
       case "idle": return new Idle();
+      case "loading": return new Loading();
+      case "success": return new Success(f(l.value));
+      case "failure": return new Failure();
   }
 }
-
 
 interface Todo {
     title: string;
     status: string;
 }
 
-const todos: Array<Todo> = [{title: "Prepare Talk", status: "In Progress"}]
+const loadableTodos = new Success([{title: "Prepare Talk", status: "In Progress"}])
 
-const loadableTodos: Loadable<Array<Todo>> = new Success(todos)
+const result = loadableTodos.map((todos) => 
+    todos.map((t: Todo) => 
+        ({...t, status: "Completed"})))
 
-const result = map(loadableTodos, (todos) => todos.map((t: Todo) => ({...t, status: "Completed"})))
 
 console.log(result)

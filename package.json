@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "typescript": "npx tsc && node ts/build/loadable.js"
+    "typescript": "npx tsc && node ts/build/loadable.js",
+    "haskell": "ghc -o hs/build/loadable hs/src/loadable.hs && hs/build/loadable"
   },
   "author": "",
   "license": "ISC",
